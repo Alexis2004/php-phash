@@ -14,7 +14,8 @@
 
  <release>
   <version>0.9.2</version>
-  <date>2013-04-23</date>
+  <date>2013-05-14</date>
+
 <state>beta</state>
  </release>
 
@@ -29,6 +30,11 @@
  </deps>
 
 <code role="code" position="top">
+struct ph_mh_image_hash
+{
+	uint8_t *hash;
+	int len;
+};
 struct ph_audio_hash
 {
 	uint32_t *hash;
@@ -79,7 +85,18 @@ struct ph_text_hash
 	}
  </destruct>
 </resource>
-
+<resource name="ph_mh_image_hash" payload="ph_mh_image_hash" alloc="no">
+ <description>
+  A uint8_t resource
+ </description>
+ <destruct>
+	if(resource)
+	{
+		free(resource->hash);
+		free(resource);
+	}
+ </destruct>
+</resource>
 <resource name="ph_txt_hash" payload="ph_text_hash" alloc="no">
  <description>
   A TxtHashPoint resource
@@ -136,8 +153,31 @@ struct ph_text_hash
 	else
 		return_res = hash;
 ]]>   
-</code>
-  </function>
+    </code>
+</function>
+
+<function name="ph_mh_imagehash" if="HAVE_IMAGE_HASH">
+   <proto>resource ph_mh_image_hash ph_mh_imagehash(string file, float alpha=2.0, float level=1.0)</proto>
+   <summary>Fixed Length MH image hash</summary>
+   <description>
+	Marr-Hildreth wavelet based image hash.
+   </description>
+   <code>
+<![CDATA[
+	int num = 0;
+	uint8_t *hash = ph_mh_imagehash(file, num, alpha, level);
+	if (hash)
+	{
+		ph_mh_image_hash *h = (ph_mh_image_hash *)malloc(sizeof(ph_mh_image_hash));
+		h->hash = hash;
+		h->len = num;
+		return_res = h;
+	}
+	else
+		RETURN_FALSE;
+]]>
+    </code>
+</function>
 
 <function name="ph_texthash">
    <proto>resource ph_txt_hash ph_texthash(string file)</proto>
@@ -213,6 +253,55 @@ struct ph_text_hash
 ]]>   
 </code>
   </function>
+
+<function name="ph_dct_imagehash_to_array" if="HAVE_IMAGE_HASH">
+   <proto>array ph_dct_imagehash_to_array(resource ph_image_hash h)</proto>
+   <summary>Conversion of DCT pHash image hash to 8-bytes array.</summary>
+   <description>
+	Returns DCT pHash image hash represented as array of 8 bytes.
+   </description>
+   <code>
+<![CDATA[
+	if (h)
+	{
+		array_init(return_value);
+		uint8_t *p = (uint8_t*) h;
+		for (int i = 0; i < sizeof(ulong64) / sizeof(uint8_t); i++)
+		{
+			add_next_index_long(return_value, *(p + i));
+		}
+	}
+	else
+	{
+		RETURN_FALSE;
+	}
+]]>
+   </code>
+</function>
+
+<function name="ph_mh_imagehash_to_array" if="HAVE_IMAGE_HASH">
+   <proto>array ph_mh_imagehash_to_array(resource ph_mh_image_hash h)</proto>
+   <summary>Conversion of fixed Length MH image hash to 72-bytes array.</summary>
+   <description>
+	Returns fixed Length MH image hash represented as array of 72 bytes.
+   </description>
+   <code>
+<![CDATA[
+	if (h)
+	{
+		array_init(return_value);
+		for (int i = 0; i < h->len; i++)
+		{
+			add_next_index_long(return_value, *(h->hash + i));
+		}
+	}
+	else
+	{
+		RETURN_FALSE;
+	}
+]]>
+   </code>
+</function>
 
 <function name="ph_video_dist" if="HAVE_VIDEO_HASH">
    <proto>float ph_video_dist(resource ph_video_hash h1,resource ph_video_hash h2, int thresh=21)</proto>
