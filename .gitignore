@@ -39,6 +39,7 @@ scan_makefile_in.awk
 *.plg
 *.opt
 *.ncb
+*.bak
 Release
 Release_inline
 Debug
@@ -51,5 +52,6 @@ CREDITS
 EXPERIMENTAL
 LICENSE
 pHash.cpp
-package2.xml
+php_pHash.h
+package*.xml
 run-tests.php
