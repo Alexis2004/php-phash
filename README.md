@@ -12,7 +12,7 @@ BUILDING ON UNIX etc.
 To compile your new extension, you will have to execute the following steps:
 
 	$ pear install CodeGen_PECL		# Once before first extension compiling
-    $ ./compile.sh
+	$ ./compile.sh
 
 
 BUILDING ON WINDOWS
@@ -33,7 +33,7 @@ TESTING
 
 You can now load the extension using a php.ini directive
 
-  extension="pHash.[so|dll]"
+	extension="pHash.[so|dll]"
 
 or load it at runtime using the dl() function
 
@@ -42,10 +42,10 @@ or load it at runtime using the dl() function
 The extension should now be available, you can test this using the
 extension_loaded() function:
 
-  if (extension_loaded("pHash"))
-    echo "pHash loaded :)";
-  else
-    echo "something is wrong :(";
+	if (extension_loaded("pHash"))
+		echo "pHash loaded :)";
+	else
+		echo "something is wrong :(";
 
 The extension will also add its own block to the output of phpinfo().
 
@@ -56,10 +56,10 @@ DIFFERENCIES WITH ORIGINAL VERSION
 1. Added function ph_mh_imagehash for calculating Marr-Hildreth wavelet
 based image hash:
 
-    resource ph_mh_imagehash(string file, float alpha=2.0, float level=1.0)
+	resource ph_mh_imagehash(string file, float alpha=2.0, float level=1.0)
 
 2. Added functions ph_dct_imagehash_to_array and ph_mh_imagehash_to_array
 for exporting DCT and Marr-Hildreth pHash from internal resource representation into bytes array:
    
-    array ph_dct_imagehash_to_array(resource h)
-    array ph_mh_imagehash_to_array(resource h)
+	array ph_dct_imagehash_to_array(resource h)
+	array ph_mh_imagehash_to_array(resource h)
